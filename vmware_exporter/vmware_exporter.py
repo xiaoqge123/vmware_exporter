@@ -26,6 +26,9 @@ from pyVim import connect
 
 # Prometheus specific imports
 from prometheus_client.core import GaugeMetricFamily, _floatToGoString
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 
 
 class VMWareMetricsResource(Resource):
@@ -77,10 +80,13 @@ class VMWareMetricsResource(Resource):
                 metric.name, metric.documentation.replace('\\', r'\\').replace('\n', r'\n')))
             output.append('\n# TYPE {0} {1}\n'.format(metric.name, metric.type))
             for name, labels, value in metric.samples:
+                print ("name...............%s"%name)
+                print ("lables...............%s"%labels)
+                print ("value ...........%s"%value)
                 if labels:
                     labelstr = '{{{0}}}'.format(','.join(
                         ['{0}="{1}"'.format(
-                         k, v.replace('\\', r'\\').replace('\n', r'\n').replace('"', r'\"'))
+                         k.encode('utf-8'), v.replace('\\', r'\\').replace('\n', r'\n').replace('"', r'\"').encode('utf-8'))
                          for k, v in sorted(labels.items())]))
                 else:
                     labelstr = ''
@@ -385,6 +391,7 @@ class VMWareMetricsResource(Resource):
                         vm_metrics[p_metric].add_metric([vm.name],
                                         float(sum(result[0].value[0].value)))
                     except:
+                        print("Error! Cannot get vm metrics, details: \n ", result)
                         print("Error, cannot get vm metrics {0} for {1}".format(p_metric, vm.name))
                         pass
 
@@ -442,6 +449,4 @@ def main():
 
 
 if __name__ == '__main__':
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
     main()
