@@ -80,9 +80,6 @@ class VMWareMetricsResource(Resource):
                 metric.name, metric.documentation.replace('\\', r'\\').replace('\n', r'\n')))
             output.append('\n# TYPE {0} {1}\n'.format(metric.name, metric.type))
             for name, labels, value in metric.samples:
-                print ("name...............%s"%name)
-                print ("lables...............%s"%labels)
-                print ("value ...........%s"%value)
                 if labels:
                     labelstr = '{{{0}}}'.format(','.join(
                         ['{0}="{1}"'.format(
